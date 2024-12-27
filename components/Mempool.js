@@ -7,6 +7,7 @@ export default function Mempool() {
   const [bestBlockInfo, setBestBlockInfo] = useState({});
   const [mempoolInfo, setMempoolInfo] = useState({});
 
+
   const getMempoolSize = async () => {
     if (!bestBlockInfo.tlen) return;
     const res = await axios.get("/api/mempoolsize");
@@ -19,11 +20,11 @@ export default function Mempool() {
   useEffect(() => {
     const interval = setInterval(() => {
       getBestBlockInfo();
-      if (bestBlockInfo.tlen) {
-        getMempoolSize();
-      }
+    if (bestBlockInfo.tlen) {
       getMempoolSize();
-    }, 5000);
+    }
+      getMempoolSize();
+    },5000);
 
     return () => clearInterval(interval);
   }, [bestBlockInfo, mempoolInfo]);
@@ -83,55 +84,51 @@ export default function Mempool() {
     };
   };
   return (
-    <>
-      {bestBlockInfo.tlen && mempoolInfo.relativeSize ? (
-        <div className="flex flex-col w-2/3 mx-auto mt-10">
-          <div className="text-xl font-bold">Best Block Info:</div>
+    <>{(bestBlockInfo.tlen && mempoolInfo.relativeSize )?
+      <div className="flex flex-col w-2/3 mx-auto mt-10">
+        <div className="text-xl font-bold">Best Block Info:</div>
+        <div className="text-lg">Best Block Hash: {bestBlockInfo.bestRepr}</div>
+        <div className="text-lg">
+          Best Block Height: {bestBlockInfo.bestHeight}
+        </div>
+        <div className="text-lg">
+          Number of Transactions: {bestBlockInfo.tlen}
+        </div>
+        <div className="text-lg">Target: {bestBlockInfo.bestTarget}</div>
+        <div>
+          <div className="text-xl font-bold">Mempool Info:</div>
           <div className="text-lg">
-            Best Block Hash: {bestBlockInfo.bestRepr}
+            Mempool Size: {parseFloat(mempoolInfo.size)}
           </div>
           <div className="text-lg">
-            Best Block Height: {bestBlockInfo.bestHeight}
+            Relative Size: {(mempoolInfo.relativeSize * 100).toFixed(2)}%
           </div>
-          <div className="text-lg">
-            Number of Transactions: {bestBlockInfo.tlen}
+          <div className="mt-5 mb-1  text-center">
+            <label htmlFor="progress" className="font-bold mt-5 text-xl">
+              Mempool Progress:
+            </label>
           </div>
-          <div className="text-lg">Target: {bestBlockInfo.bestTarget}</div>
-          <div>
-            <div className="text-xl font-bold">Mempool Info:</div>
-            <div className="text-lg">
-              Mempool Size: {parseFloat(mempoolInfo.size)}
-            </div>
-            <div className="text-lg">
-              Relative Size: {(mempoolInfo.relativeSize * 100).toFixed(2)}%
-            </div>
-            <div className="mt-5 mb-1  text-center">
-              <label htmlFor="progress" className="font-bold mt-5 text-xl">
-                Mempool Progress:
-              </label>
-            </div>
-            <div className="bg-slate-300 h-8  rounded-xl   ">
-              <div
-                id="progress"
-                className="bg-black h-full rounded-lg"
-                style={{
-                  width: `${
-                    mempoolInfo.relativeSize < 1
-                      ? mempoolInfo.relativeSize * 100
-                      : 100
+          <div className="bg-slate-300 h-8  rounded-xl   ">
+            <div
+              id="progress"
+              className="bg-black h-full rounded-lg"
+              style={{
+                width: `${mempoolInfo.relativeSize < 1
+                    ? mempoolInfo.relativeSize * 100
+                    : 100
                   }%`,
-                }}></div>
-            </div>
-            {mempoolInfo.relativeSize > 1 && (
-              <MempoolExceeds diffRelative={mempoolInfo.relativeSize} />
-            )}
+              }}></div>
           </div>
+          {mempoolInfo.relativeSize > 1 && (
+            <MempoolExceeds diffRelative={mempoolInfo.relativeSize} />
+          )}
         </div>
-      ) : (
-        <div className="flex justify-center mt-5 items-center">
-          <div className="text-3xl">Loading...</div>
-        </div>
-      )}
+      </div>
+      : 
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-3xl">Loading...</div>
+      </div>
+    }
     </>
   );
 }
