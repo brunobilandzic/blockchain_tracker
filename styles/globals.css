@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.link {
-  @apply p-2 border rounded-md hover:cursor-pointer hover:bg-gray-100;
+.custom-link {
+  @apply text-blue-500;
 }

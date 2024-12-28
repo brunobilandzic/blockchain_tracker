@@ -155,10 +155,8 @@ const initBody = () => {
   // body.style.height = "screen.height";
 };
 
-const getColorString = (diffRelative) => {
+export const getColorString = (diffRelative) => {
   let redAmount, greenAmount, blueAmount;
-
-  console.log(diffRelative);
 
   if (diffRelative < 0.5) {
     redAmount = 255;
@@ -182,7 +180,6 @@ const getColorString = (diffRelative) => {
     blueAmount = 255 * (diffRelative - 1);
   }
   const colorString = `rgb(${redAmount}, ${greenAmount}, ${blueAmount})`;
-  console.log(colorString);
   return colorString;
 };
 

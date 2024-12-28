@@ -15,7 +15,7 @@ const Layout = ({ children }) => {
     }
   }, [router.pathname]);
   return (
-    <div className={`${!isMempool ? "bg-slate-50" : "bg-inherit"} `}>
+    <div className={`${!isMempool ? "bg-slate-50" : "bg-inherit"} pr-0`}>
       <Head>
         <title>Blockchain Tracker</title>
         <meta name="description" content="Track your blockchain transactions" />
@@ -41,12 +41,31 @@ const Navbar = () => {
           </Link>
         </li>
         <li>
-          <Link className="cursor:pointer  hover:text-gray-700" href="/builder">
-            Builder
+          <Link className="cursor:pointer  hover:text-gray-700" href="/slicer">
+            Slicer
           </Link>
         </li>
       </ul>
     </nav>
+  );
+};
+
+export const HomePage = () => {
+  return (
+    <div className="flex flex-col gap-8 items-center">
+      <div className="text-3xl">Welcome to the Blockchain Tracker</div>
+      <div className="text-xl">
+        Here you can view state of{" "}
+        <Link className="custom-link" href="/mempool">
+          mempool
+        </Link>{" "}
+        and{" "}
+        <Link className="custom-link" href="/slicer">
+          slice
+        </Link>{" "}
+        the blockchain
+      </div>
+    </div>
   );
 };
 

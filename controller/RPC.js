@@ -41,7 +41,9 @@ export async function getBlocksInPeriod(startTime, endTime) {
     while (header.time > endTime) {
       blockTimeISO = new Date(header.time * 1000).toISOString();
       console.log(
-        `header after period. changing ${i} (${i * 10} minutes) hash with time ${blockTimeISO} to ${
+        `header after period. changing ${i} (${
+          i * 10
+        } minutes) hash with time ${blockTimeISO} to ${
           header.previousblockhash
         }`
       );
@@ -50,14 +52,17 @@ export async function getBlocksInPeriod(startTime, endTime) {
       i++;
     }
 
-    console.log(`First block in period: ${hash} no ${i} with time ${blockTimeISO}`);
+    console.log(
+      `First block in period: ${hash} no ${i} with time ${blockTimeISO}`
+    );
 
-
-    i=0
+    i = 0;
     while (header.time >= startTime) {
       blockTimeISO = new Date(header.time * 1000).toISOString();
       console.log(
-        `header in period. adding ${i} (${i * 10} minutes) hash with time ${blockTimeISO}`
+        `header in period. adding ${i} (${
+          i * 10
+        } minutes) hash with time ${blockTimeISO}`
       );
       blocksInPeriod.push(header);
       hash = header.previousblockhash;
@@ -65,10 +70,24 @@ export async function getBlocksInPeriod(startTime, endTime) {
       i++;
     }
 
-
-
     return blocksInPeriod;
   } catch (err) {
     console.error("Error fetching blocks:", err);
   }
 }
+
+export const getBlocks = async (headers) => {
+  console.log("recieved in rpce headers:", headers?.length);
+  const blocks = [];
+
+  const fetchBlocksPromises = headers?.map(async (header) => {
+    const block = await brunoClient.getBlock(header.hash);
+    blocks.push(block);
+    console.log(`fetched block &{block.hash} with ${block.size} bytes`);
+    return block;
+  });
+
+  await Promise.all(fetchBlocksPromises);
+
+  return blocks;
+};
