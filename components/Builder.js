@@ -1,9 +1,19 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 export default function Builder() {
   const [chainInfo, setChainInfo] = useState({});
   const [params, setParams] = useState(initialParams);
+
+  const getChainInfo = useCallback(async () => {
+    const res = await axios.get("/api/period", {
+      params: {
+        start: new Date(params.start).getTime() / 1000,
+        end: new Date(params.end).getTime() / 1000,
+      },
+    });
+    setChainInfo(res.data);
+  }, [params]);
 
   const handleChange = (e) => {
     setParams({ ...params, [e.target.name]: e.target.value });
@@ -12,20 +22,10 @@ export default function Builder() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(params);
+    getChainInfo();
   };
 
   useEffect(() => {
-    const getChainInfo = async () => {
-      const res = await axios.get("/api/blockchaininfo", {
-        params: {
-          start: 0,
-          end: 10,
-        },
-      });
-      setChainInfo(res.data);
-    };
-
-    // getChainInfo();
   }, []);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ const ChooseParameters = ({ params, handleChange, handleSubmit }) => {
 };
 
 const initialParams = {
-  start: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString().split("T")[0],
+  start: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString().split("T")[0],
   end: new Date().toISOString().split("T")[0],
   speed: 1,
 };

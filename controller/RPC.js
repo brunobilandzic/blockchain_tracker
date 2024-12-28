@@ -25,34 +25,47 @@ export const blockChainInfo = async () => {
   return chainInfo;
 };
 
-
-async function getBlocksInPeriod(startTime, endTime) {
+export async function getBlocksInPeriod(startTime, endTime) {
   try {
-    const blocksInPeriod = [];
+    const startTimeISO = new Date(startTime * 1000).toISOString();
+    const endTimeISO = new Date(endTime * 1000).toISOString();
+    let hash = await brunoClient.getBestBlockHash();
+    let header = await brunoClient.getBlockHeader(hash, true);
 
-    // Get the best block hash to start
-    let blockHash = await brunoClient.getBestBlockHash();
+    console.log(`Fetching blocks between ${startTimeISO} and ${endTimeISO}`);
+    console.log(`Best hash: ${hash}`);
 
-    while (blockHash) {
-      // Fetch the block data
-      const block = await brunoClient.getBlock(blockHash);
-      const blockTime = block.time;
-
-      // Stop if the block's timestamp is before the start time
-      if (blockTime < startTime) break;
-
-      // Collect blocks within the time range
-      if (blockTime >= startTime && blockTime <= endTime) {
-        blocksInPeriod.push({
-          hash: block.hash,
-          height: block.height,
-          time: block.time,
-        });
-      }
-
-      // Move to the previous block
-      blockHash = block.previousblockhash;
+    let blocksInPeriod = [];
+    let i = 0;
+    let blockTimeISO = new Date(header.time * 1000).toISOString();
+    while (header.time > endTime) {
+      blockTimeISO = new Date(header.time * 1000).toISOString();
+      console.log(
+        `header after period. changing ${i} (${i * 10} minutes) hash with time ${blockTimeISO} to ${
+          header.previousblockhash
+        }`
+      );
+      hash = header.previousblockhash;
+      header = await brunoClient.getBlockHeader(hash, true);
+      i++;
     }
+
+    console.log(`First block in period: ${hash} no ${i} with time ${blockTimeISO}`);
+
+
+    i=0
+    while (header.time >= startTime) {
+      blockTimeISO = new Date(header.time * 1000).toISOString();
+      console.log(
+        `header in period. adding ${i} (${i * 10} minutes) hash with time ${blockTimeISO}`
+      );
+      blocksInPeriod.push(header);
+      hash = header.previousblockhash;
+      header = await brunoClient.getBlockHeader(hash, true);
+      i++;
+    }
+
+
 
     return blocksInPeriod;
   } catch (err) {
