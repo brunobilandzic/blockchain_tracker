@@ -1,7 +1,7 @@
 const Client = require("bitcoin-core");
 const { config } = require("./config");
 
-const brunoClient = new Client(config("mainnet"));
+const brunoClient = new Client(config("litecoin"));
 
 export const BestInfo = async () => {
   const bestHash = await brunoClient.getBestBlockHash();
@@ -75,19 +75,3 @@ export async function getBlocksInPeriod(startTime, endTime) {
     console.error("Error fetching blocks:", err);
   }
 }
-
-export const getBlocks = async (headers) => {
-  console.log("recieved in rpce headers:", headers?.length);
-  const blocks = [];
-
-  const fetchBlocksPromises = headers?.map(async (header) => {
-    const block = await brunoClient.getBlock(header.hash);
-    blocks.push(block);
-    console.log(`fetched block &{block.hash} with ${block.size} bytes`);
-    return block;
-  });
-
-  await Promise.all(fetchBlocksPromises);
-
-  return blocks;
-};

@@ -89,9 +89,8 @@ const BlockChain = ({ headers }) => {
         <div className="flex gap-2">
           Sort By:
           <select onChange={sortChange}>
-            <option value="">None</option>
-            <option value="nTx">Number transactions</option>
             <option value="height">Height</option>
+            <option value="nTx">Number transactions</option>
           </select>
           <div className="cursor-pointer text-xl" onClick={toggleSort}>
             {!isAscending ? <PiSortAscending /> : <TbSortAscending />}

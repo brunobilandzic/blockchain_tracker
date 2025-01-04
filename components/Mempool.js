@@ -51,13 +51,7 @@ export default function Mempool() {
   }, [bestBlockInfo]);
 
   useEffect(() => {
-    console.log("Best Block Info:", bestBlockInfo);
-    console.log("Mempool Size:", mempoolInfo);
-  }, [bestBlockInfo, mempoolInfo]);
-
-  useEffect(() => {
     if (!bestBlockInfo.tlen || !mempoolInfo.relativeSize) return;
-    initBody();
     addBackground(mempoolInfo.relativeSize);
   }, [bestBlockInfo, mempoolInfo]);
 
@@ -67,15 +61,12 @@ export default function Mempool() {
 
     let reachedLetter = false;
     const bestTarget = reprArr.filter((char, i) => {
-      console.log("reach letter ", reachedLetter);
-
       if (!reachedLetter && !isNaN(parseInt(char))) {
         return true;
       }
       if (isNaN(parseInt(char))) {
         reachedLetter = true;
       }
-      // console.log(char, isNaN(parseInt(char)));
     });
 
     return {
@@ -148,13 +139,6 @@ const MempoolExceeds = ({ diffRelative }) => {
   );
 };
 
-const initBody = () => {
-  const body = document.body;
-
-  // body.style.width = "screen.width";
-  // body.style.height = "screen.height";
-};
-
 export const getColorString = (diffRelative) => {
   let redAmount, greenAmount, blueAmount;
 
@@ -182,8 +166,6 @@ export const getColorString = (diffRelative) => {
   const colorString = `rgb(${redAmount}, ${greenAmount}, ${blueAmount})`;
   return colorString;
 };
-
-const getProgressColor = (diffRelative) => {};
 
 const addBackground = (diffRelative) => {
   document.body.style.backgroundColor = getColorString(diffRelative);

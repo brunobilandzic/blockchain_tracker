@@ -10,10 +10,10 @@ export const config = (type) => {
     password: process.env.KRIPTO_PASSWORD,
   };
   if (type === "mainnet") {
-    return { ...mutualProps, network: "mainnet", port: 50004 };
+    return { ...mutualProps, port: 50004 };
   } else if (type === "testnet") {
-    return { ...mutualProps, network: "testnet", port: 51002 };
+    return { ...mutualProps, port: 51002 };
   } else if (type === "litecoin") {
-    return { ...mutualProps, network: "litecoin", port: 53012 };
+    return { ...mutualProps, port: 53012 };
   }
 };
